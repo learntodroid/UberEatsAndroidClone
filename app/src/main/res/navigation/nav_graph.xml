@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.home.HomeFragment"
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_restaurantFragment"
+            app:destination="@id/restaurantFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.search.SearchFragment"
+        android:label="SearchFragment" />
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.AccountFragment"
+        android:label="AccountFragment" />
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.OrdersFragment"
+        android:label="OrdersFragment" />
+    <fragment
+        android:id="@+id/restaurantFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.restaurant.RestaurantFragment"
+        android:label="RestaurantFragment" />
+</navigation>

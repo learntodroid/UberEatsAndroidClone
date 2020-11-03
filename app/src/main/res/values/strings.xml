@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Uber Eats Android Clone</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="account">Account</string>
+    <string name="orders">Orders</string>
+    <string name="restaurants_in_your_area">Restaurants in your area</string>
+</resources>
