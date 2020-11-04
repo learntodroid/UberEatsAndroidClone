@@ -1,5 +1,7 @@
 package com.learntodroid.ubereatsandroidclone.home;
 
+import java.util.List;
+
 public class Restaurant {
     private String title;
     private double deliveryFee;
@@ -7,14 +9,20 @@ public class Restaurant {
     private int maxDeliveryTime;
     private double userRating;
     private String imageUri;
+    private String priceCategory;
+    private List<String> foodCategories;
+    private String address;
 
-    public Restaurant(String title, double deliveryFee, int minDeliveryTime, int maxDeliveryTime, double userRating, String imageUri) {
+    public Restaurant(String title, double deliveryFee, int minDeliveryTime, int maxDeliveryTime, double userRating, String imageUri, String priceCategory, List<String> foodCategories, String address) {
         this.title = title;
         this.deliveryFee = deliveryFee;
         this.minDeliveryTime = minDeliveryTime;
         this.maxDeliveryTime = maxDeliveryTime;
         this.userRating = userRating;
         this.imageUri = imageUri;
+        this.priceCategory = priceCategory;
+        this.foodCategories = foodCategories;
+        this.address = address;
     }
 
     public String getTitle() {
@@ -63,5 +71,29 @@ public class Restaurant {
 
     public void setImageUri(String imageUri) {
         this.imageUri = imageUri;
+    }
+
+    public String getPriceCategory() {
+        return priceCategory;
+    }
+
+    public void setPriceCategory(String priceCategory) {
+        this.priceCategory = priceCategory;
+    }
+
+    public List<String> getFoodCategories() {
+        return foodCategories;
+    }
+
+    public void setFoodCategories(List<String> foodCategories) {
+        this.foodCategories = foodCategories;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
