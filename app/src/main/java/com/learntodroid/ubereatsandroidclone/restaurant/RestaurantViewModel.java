@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.learntodroid.ubereatsandroidclone.UberEatsRepository;
 import com.learntodroid.ubereatsandroidclone.home.Restaurant;
+import com.learntodroid.ubereatsandroidclone.menuitemdetails.ShoppingCart;
 
 import java.util.List;
 
@@ -12,11 +13,13 @@ public class RestaurantViewModel extends ViewModel {
     private UberEatsRepository uberEatsRepository;
     private MutableLiveData<Restaurant> selectedRestaurantMutableLiveData;
     private MutableLiveData<List<MenuItem>> menuItemsMutableLiveData;
+    private MutableLiveData<ShoppingCart> shoppingCartMutableLiveData;
 
     public RestaurantViewModel() {
         uberEatsRepository = UberEatsRepository.getInstance();
         this.selectedRestaurantMutableLiveData = uberEatsRepository.getSelectedRestaurantMutableLiveData();
         this.menuItemsMutableLiveData = uberEatsRepository.getMenuItemsMutableLiveData();
+        this.shoppingCartMutableLiveData = uberEatsRepository.getShoppingCartMutableLiveData();
         uberEatsRepository.queryMenuItems();
     }
 
@@ -30,5 +33,9 @@ public class RestaurantViewModel extends ViewModel {
 
     public MutableLiveData<List<MenuItem>> getMenuItemsMutableLiveData() {
         return menuItemsMutableLiveData;
+    }
+
+    public MutableLiveData<ShoppingCart> getShoppingCartMutableLiveData() {
+        return shoppingCartMutableLiveData;
     }
 }

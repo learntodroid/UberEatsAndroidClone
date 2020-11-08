@@ -15,6 +15,10 @@ public class MenuItemDetailsViewModel extends ViewModel {
         this.selectedMenuItemMutableLiveData = uberEatsRepository.getSelectedMenuItemMutableLiveData();
     }
 
+    public void addToShoppingCart(MenuItem menuItem, int quantity) {
+        uberEatsRepository.addToShoppingCart(menuItem, quantity);
+    }
+
     public MutableLiveData<MenuItem> getSelectedMenuItemMutableLiveData() {
         return selectedMenuItemMutableLiveData;
     }

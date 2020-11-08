@@ -3,6 +3,8 @@ package com.learntodroid.ubereatsandroidclone;
 import androidx.lifecycle.MutableLiveData;
 
 import com.learntodroid.ubereatsandroidclone.home.Restaurant;
+import com.learntodroid.ubereatsandroidclone.menuitemdetails.CartItem;
+import com.learntodroid.ubereatsandroidclone.menuitemdetails.ShoppingCart;
 import com.learntodroid.ubereatsandroidclone.restaurant.MenuItem;
 import com.learntodroid.ubereatsandroidclone.search.Category;
 
@@ -18,6 +20,7 @@ public class UberEatsRepository {
     private MutableLiveData<Restaurant> selectedRestaurantMutableLiveData;
     private MutableLiveData<List<MenuItem>> menuItemsMutableLiveData;
     private MutableLiveData<MenuItem> selectedMenuItemMutableLiveData;
+    private MutableLiveData<ShoppingCart> shoppingCartMutableLiveData;
 
     private UberEatsRepository() {
         this.categoriesMutableLiveData = new MutableLiveData<>();
@@ -25,6 +28,7 @@ public class UberEatsRepository {
         this.selectedRestaurantMutableLiveData = new MutableLiveData<>();
         this.menuItemsMutableLiveData = new MutableLiveData<>();
         this.selectedMenuItemMutableLiveData = new MutableLiveData<>();
+        this.shoppingCartMutableLiveData = new MutableLiveData<>(new ShoppingCart());
     }
 
     public void queryCategories() {
@@ -67,6 +71,12 @@ public class UberEatsRepository {
         menuItemsMutableLiveData.postValue(menuItems);
     }
 
+    public void addToShoppingCart(MenuItem menuItem, int quantity) {
+        ShoppingCart shoppingCart = shoppingCartMutableLiveData.getValue();
+        shoppingCart.addToCart(menuItem, quantity);
+        shoppingCartMutableLiveData.postValue(shoppingCart);
+    }
+
     public void setSelectedRestaurant(Restaurant restaurant) {
         selectedRestaurantMutableLiveData.postValue(restaurant);
     }
@@ -93,6 +103,10 @@ public class UberEatsRepository {
 
     public MutableLiveData<MenuItem> getSelectedMenuItemMutableLiveData() {
         return selectedMenuItemMutableLiveData;
+    }
+
+    public MutableLiveData<ShoppingCart> getShoppingCartMutableLiveData() {
+        return shoppingCartMutableLiveData;
     }
 
     public static UberEatsRepository getInstance(){

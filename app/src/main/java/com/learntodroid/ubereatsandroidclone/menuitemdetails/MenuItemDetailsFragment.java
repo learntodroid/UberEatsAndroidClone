@@ -73,6 +73,15 @@ public class MenuItemDetailsFragment extends Fragment {
         addItemButton = view.findViewById(R.id.fragment_menuitemdetails_addtocart);
         backButton = view.findViewById(R.id.fragment_menuitemdetails_back);
 
+        addItemButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int qty = Integer.parseInt(quantityEditText.getText().toString());
+                menuItemDetailsViewModel.addToShoppingCart(menuItem, qty);
+                Navigation.findNavController(getView()).popBackStack();
+            }
+        });
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +98,7 @@ public class MenuItemDetailsFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() > 0) {
-                    int qty = Integer.parseInt(charSequence.toString());    //todo fix bug here
+                    int qty = Integer.parseInt(charSequence.toString());
                     addItemButton.setText(String.format("Add %d to cart for %s", qty, NumberFormat.getCurrencyInstance().format(qty * menuItem.getPrice())));
                 }
             }

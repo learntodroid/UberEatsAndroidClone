@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.learntodroid.ubereatsandroidclone.R;
 import com.learntodroid.ubereatsandroidclone.home.Restaurant;
+import com.learntodroid.ubereatsandroidclone.menuitemdetails.ShoppingCart;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -30,6 +31,7 @@ public class RestaurantFragment extends Fragment implements OnMenuItemClickListe
     private MenuRecyclerAdapter menuRecyclerAdapter;
     private TextView titleTextView, categoriesTextView, statsTextView, addressTextView;
     private ImageView image;
+    private TextView cartDetailsTextView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class RestaurantFragment extends Fragment implements OnMenuItemClickListe
         categoriesTextView = view.findViewById(R.id.fragment_restaurant_categories);
         statsTextView = view.findViewById(R.id.fragment_restaurant_stats);
         addressTextView = view.findViewById(R.id.fragment_restaurant_address);
+        cartDetailsTextView = view.findViewById(R.id.fragment_restaurant_cartdetails);
 
         image = view.findViewById(R.id.fragment_restaurant_image);
 
@@ -80,6 +83,17 @@ public class RestaurantFragment extends Fragment implements OnMenuItemClickListe
             public void onChanged(List<MenuItem> menuItems) {
                 if (menuItems != null) {
                     menuRecyclerAdapter.setMenuItems(menuItems);
+                }
+            }
+        });
+
+        restaurantViewModel.getShoppingCartMutableLiveData().observe(getViewLifecycleOwner(), new Observer<ShoppingCart>() {
+            @Override
+            public void onChanged(ShoppingCart shoppingCart) {
+                if (shoppingCart != null) {
+                    if (shoppingCart.getCartItems().size() > 0) {
+                        cartDetailsTextView.setText(String.format("%d items in cart: %s", shoppingCart.getCartItems().size(), NumberFormat.getCurrencyInstance().format(shoppingCart.calculateTotalPrice())));
+                    }
                 }
             }
         });
