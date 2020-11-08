@@ -13,10 +13,17 @@ import com.bumptech.glide.Glide;
 import com.learntodroid.ubereatsandroidclone.R;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapter.MenuItemRecyclerViewHolder> {
     private List<MenuItem> menuItems;
+    private OnMenuItemClickListener listener;
+
+    public MenuRecyclerAdapter(OnMenuItemClickListener listener) {
+        this.menuItems = new ArrayList<>();
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
@@ -53,7 +60,7 @@ public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapte
             image = itemView.findViewById(R.id.item_menuitem_image);
         }
 
-        public void bind(MenuItem menuItem) {
+        public void bind(final MenuItem menuItem) {
             title.setText(menuItem.getTitle());
             description.setText(menuItem.getDescription());
             price.setText(NumberFormat.getCurrencyInstance().format(menuItem.getPrice()));
@@ -62,6 +69,13 @@ public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapte
                     .load(menuItem.getImageUri())
                     .fitCenter()
                     .into(image);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.menuItemClick(menuItem);
+                }
+            });
         }
     }
 }

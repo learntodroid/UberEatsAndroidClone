@@ -17,12 +17,14 @@ public class UberEatsRepository {
     private MutableLiveData<List<Restaurant>> restaurantMutableLiveData;
     private MutableLiveData<Restaurant> selectedRestaurantMutableLiveData;
     private MutableLiveData<List<MenuItem>> menuItemsMutableLiveData;
+    private MutableLiveData<MenuItem> selectedMenuItemMutableLiveData;
 
     private UberEatsRepository() {
         this.categoriesMutableLiveData = new MutableLiveData<>();
         this.restaurantMutableLiveData = new MutableLiveData<>();
         this.selectedRestaurantMutableLiveData = new MutableLiveData<>();
         this.menuItemsMutableLiveData = new MutableLiveData<>();
+        this.selectedMenuItemMutableLiveData = new MutableLiveData<>();
     }
 
     public void queryCategories() {
@@ -69,6 +71,10 @@ public class UberEatsRepository {
         selectedRestaurantMutableLiveData.postValue(restaurant);
     }
 
+    public void setSelectedMenuItem(MenuItem menuItem) {
+        selectedMenuItemMutableLiveData.postValue(menuItem);
+    }
+
     public MutableLiveData<List<Category>> getCategoriesMutableLiveData() {
         return categoriesMutableLiveData;
     }
@@ -83,6 +89,10 @@ public class UberEatsRepository {
 
     public MutableLiveData<List<MenuItem>> getMenuItemsMutableLiveData() {
         return menuItemsMutableLiveData;
+    }
+
+    public MutableLiveData<MenuItem> getSelectedMenuItemMutableLiveData() {
+        return selectedMenuItemMutableLiveData;
     }
 
     public static UberEatsRepository getInstance(){

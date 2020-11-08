@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +25,7 @@ import com.learntodroid.ubereatsandroidclone.home.Restaurant;
 import java.text.NumberFormat;
 import java.util.List;
 
-public class RestaurantFragment extends Fragment {
+public class RestaurantFragment extends Fragment implements OnMenuItemClickListener {
     private RestaurantViewModel restaurantViewModel;
     private MenuRecyclerAdapter menuRecyclerAdapter;
     private TextView titleTextView, categoriesTextView, statsTextView, addressTextView;
@@ -34,34 +35,8 @@ public class RestaurantFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        menuRecyclerAdapter = new MenuRecyclerAdapter();
+        menuRecyclerAdapter = new MenuRecyclerAdapter(this);
         restaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
-
-        restaurantViewModel.getSelectedRestaurantMutableLiveData().observe(this, new Observer<Restaurant>() {
-            @Override
-            public void onChanged(Restaurant r) {
-                if (r != null) {
-                    titleTextView.setText(r.getTitle());
-                    categoriesTextView.setText(String.format("%s %s", r.getPriceCategory(), TextUtils.join(", ", r.getFoodCategories())));
-                    statsTextView.setText(String.format("%d-%d min %.2f %s", r.getMinDeliveryTime(), r.getMaxDeliveryTime(), r.getUserRating(), NumberFormat.getCurrencyInstance().format(r.getDeliveryFee())));
-                    addressTextView.setText(r.getAddress());
-
-                    Glide.with(getContext())
-                            .load(r.getImageUri())
-                            .fitCenter()
-                            .into(image);
-                }
-            }
-        });
-
-        restaurantViewModel.getMenuItemsMutableLiveData().observe(this, new Observer<List<MenuItem>>() {
-            @Override
-            public void onChanged(List<MenuItem> menuItems) {
-                if (menuItems != null) {
-                    menuRecyclerAdapter.setMenuItems(menuItems);
-                }
-            }
-        });
     }
 
     @Nullable
@@ -83,6 +58,38 @@ public class RestaurantFragment extends Fragment {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(menuRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
         menuRecyclerView.addItemDecoration(itemDecoration);
 
+        restaurantViewModel.getSelectedRestaurantMutableLiveData().observe(getViewLifecycleOwner(), new Observer<Restaurant>() {
+            @Override
+            public void onChanged(Restaurant r) {
+                if (r != null) {
+                    titleTextView.setText(r.getTitle());
+                    categoriesTextView.setText(String.format("%s %s", r.getPriceCategory(), TextUtils.join(", ", r.getFoodCategories())));
+                    statsTextView.setText(String.format("%d-%d min %.2f %s", r.getMinDeliveryTime(), r.getMaxDeliveryTime(), r.getUserRating(), NumberFormat.getCurrencyInstance().format(r.getDeliveryFee())));
+                    addressTextView.setText(r.getAddress());
+
+                    Glide.with(getContext())
+                            .load(r.getImageUri())
+                            .fitCenter()
+                            .into(image);
+                }
+            }
+        });
+
+        restaurantViewModel.getMenuItemsMutableLiveData().observe(getViewLifecycleOwner(), new Observer<List<MenuItem>>() {
+            @Override
+            public void onChanged(List<MenuItem> menuItems) {
+                if (menuItems != null) {
+                    menuRecyclerAdapter.setMenuItems(menuItems);
+                }
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void menuItemClick(MenuItem menuItem) {
+        restaurantViewModel.setSelectedMenuItem(menuItem);
+        Navigation.findNavController(getView()).navigate(R.id.action_restaurantFragment_to_menuItemDetailsFragment);
     }
 }

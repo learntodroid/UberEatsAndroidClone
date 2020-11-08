@@ -26,5 +26,13 @@
     <fragment
         android:id="@+id/restaurantFragment"
         android:name="com.learntodroid.ubereatsandroidclone.restaurant.RestaurantFragment"
-        android:label="RestaurantFragment" />
+        android:label="RestaurantFragment" >
+        <action
+            android:id="@+id/action_restaurantFragment_to_menuItemDetailsFragment"
+            app:destination="@id/menuItemDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/menuItemDetailsFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.menuitemdetails.MenuItemDetailsFragment"
+        android:label="MenuItemDetailsFragment" />
 </navigation>

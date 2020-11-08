@@ -20,6 +20,10 @@ public class RestaurantViewModel extends ViewModel {
         uberEatsRepository.queryMenuItems();
     }
 
+    public void setSelectedMenuItem(MenuItem menuItem) {
+        uberEatsRepository.setSelectedMenuItem(menuItem);
+    }
+
     public MutableLiveData<Restaurant> getSelectedRestaurantMutableLiveData() {
         return selectedRestaurantMutableLiveData;
     }
