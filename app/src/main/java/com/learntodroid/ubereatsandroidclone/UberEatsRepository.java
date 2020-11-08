@@ -71,9 +71,10 @@ public class UberEatsRepository {
         menuItemsMutableLiveData.postValue(menuItems);
     }
 
-    public void addToShoppingCart(MenuItem menuItem, int quantity) {
+    public void addToShoppingCart(MenuItem menuItem, int quantity, String notes) {
         ShoppingCart shoppingCart = shoppingCartMutableLiveData.getValue();
-        shoppingCart.addToCart(menuItem, quantity);
+        shoppingCart.addToCart(menuItem, quantity, notes);
+        shoppingCart.setDeliveryFee(selectedRestaurantMutableLiveData.getValue().getDeliveryFee());
         shoppingCartMutableLiveData.postValue(shoppingCart);
     }
 

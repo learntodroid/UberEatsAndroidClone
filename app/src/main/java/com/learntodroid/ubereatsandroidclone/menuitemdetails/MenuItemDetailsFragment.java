@@ -77,7 +77,7 @@ public class MenuItemDetailsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 int qty = Integer.parseInt(quantityEditText.getText().toString());
-                menuItemDetailsViewModel.addToShoppingCart(menuItem, qty);
+                menuItemDetailsViewModel.addToShoppingCart(menuItem, qty, notesEditText.getText().toString());
                 Navigation.findNavController(getView()).popBackStack();
             }
         });

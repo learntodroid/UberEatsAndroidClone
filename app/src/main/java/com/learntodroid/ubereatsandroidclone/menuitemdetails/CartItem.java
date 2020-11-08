@@ -5,10 +5,12 @@ import com.learntodroid.ubereatsandroidclone.restaurant.MenuItem;
 public class CartItem {
     private MenuItem menuItem;
     private int quantity;
+    private String notes;
 
-    public CartItem(MenuItem menuItem, int quantity) {
+    public CartItem(MenuItem menuItem, int quantity, String notes) {
         this.menuItem = menuItem;
         this.quantity = quantity;
+        this.notes = notes;
     }
 
     public MenuItem getMenuItem() {
@@ -25,5 +27,13 @@ public class CartItem {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

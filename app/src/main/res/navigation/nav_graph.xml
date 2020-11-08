@@ -30,9 +30,20 @@
         <action
             android:id="@+id/action_restaurantFragment_to_menuItemDetailsFragment"
             app:destination="@id/menuItemDetailsFragment" />
+        <action
+            android:id="@+id/action_restaurantFragment_to_checkOutFragment"
+            app:destination="@id/checkOutFragment" />
     </fragment>
     <fragment
         android:id="@+id/menuItemDetailsFragment"
         android:name="com.learntodroid.ubereatsandroidclone.menuitemdetails.MenuItemDetailsFragment"
         android:label="MenuItemDetailsFragment" />
+    <fragment
+        android:id="@+id/checkOutFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.checkout.CheckoutFragment"
+        android:label="CheckOutFragment" >
+        <action
+            android:id="@+id/action_checkOutFragment_to_restaurantFragment"
+            app:destination="@id/restaurantFragment" />
+    </fragment>
 </navigation>

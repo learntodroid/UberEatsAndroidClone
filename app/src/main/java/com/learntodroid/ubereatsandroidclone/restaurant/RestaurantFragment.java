@@ -92,9 +92,16 @@ public class RestaurantFragment extends Fragment implements OnMenuItemClickListe
             public void onChanged(ShoppingCart shoppingCart) {
                 if (shoppingCart != null) {
                     if (shoppingCart.getCartItems().size() > 0) {
-                        cartDetailsTextView.setText(String.format("%d items in cart: %s", shoppingCart.getCartItems().size(), NumberFormat.getCurrencyInstance().format(shoppingCart.calculateTotalPrice())));
+                        cartDetailsTextView.setText(String.format("%d items in cart: %s", shoppingCart.getCartItems().size(), NumberFormat.getCurrencyInstance().format(shoppingCart.calculateSubtotal())));
                     }
                 }
+            }
+        });
+
+        cartDetailsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(getView()).navigate(R.id.action_restaurantFragment_to_checkOutFragment);
             }
         });
 
