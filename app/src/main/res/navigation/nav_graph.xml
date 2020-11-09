@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/loginSignUpFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -45,5 +45,13 @@
         <action
             android:id="@+id/action_checkOutFragment_to_restaurantFragment"
             app:destination="@id/restaurantFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginSignUpFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.loginsignup.LoginSignUpFragment"
+        android:label="LoginSignUpFragment" >
+        <action
+            android:id="@+id/action_loginSignUpFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

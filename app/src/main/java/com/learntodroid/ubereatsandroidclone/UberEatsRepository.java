@@ -1,7 +1,16 @@
 package com.learntodroid.ubereatsandroidclone;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.learntodroid.ubereatsandroidclone.home.Restaurant;
 import com.learntodroid.ubereatsandroidclone.menuitemdetails.CartItem;
 import com.learntodroid.ubereatsandroidclone.menuitemdetails.ShoppingCart;
@@ -22,6 +31,11 @@ public class UberEatsRepository {
     private MutableLiveData<MenuItem> selectedMenuItemMutableLiveData;
     private MutableLiveData<ShoppingCart> shoppingCartMutableLiveData;
 
+    private FirebaseAuth firebaseAuth;
+    private MutableLiveData<FirebaseUser> userLiveData;
+
+    private FirebaseFirestore db;
+
     private UberEatsRepository() {
         this.categoriesMutableLiveData = new MutableLiveData<>();
         this.restaurantMutableLiveData = new MutableLiveData<>();
@@ -29,6 +43,14 @@ public class UberEatsRepository {
         this.menuItemsMutableLiveData = new MutableLiveData<>();
         this.selectedMenuItemMutableLiveData = new MutableLiveData<>();
         this.shoppingCartMutableLiveData = new MutableLiveData<>(new ShoppingCart());
+
+        this.firebaseAuth = FirebaseAuth.getInstance();
+        this.userLiveData = new MutableLiveData<>();
+        if (firebaseAuth.getCurrentUser() != null) {
+            userLiveData.postValue(firebaseAuth.getCurrentUser());
+        }
+        
+        this.db = FirebaseFirestore.getInstance();
     }
 
     public void queryCategories() {
@@ -86,6 +108,30 @@ public class UberEatsRepository {
         selectedMenuItemMutableLiveData.postValue(menuItem);
     }
 
+    public void login(String email, String password) {
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            userLiveData.postValue(firebaseAuth.getCurrentUser());
+                        }
+                    }
+                });
+    }
+
+    public void signUp(String email, String password) {
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            userLiveData.postValue(firebaseAuth.getCurrentUser());
+                        }
+                    }
+                });
+    }
+
     public MutableLiveData<List<Category>> getCategoriesMutableLiveData() {
         return categoriesMutableLiveData;
     }
@@ -108,6 +154,10 @@ public class UberEatsRepository {
 
     public MutableLiveData<ShoppingCart> getShoppingCartMutableLiveData() {
         return shoppingCartMutableLiveData;
+    }
+
+    public MutableLiveData<FirebaseUser> getUserLiveData() {
+        return userLiveData;
     }
 
     public static UberEatsRepository getInstance(){
