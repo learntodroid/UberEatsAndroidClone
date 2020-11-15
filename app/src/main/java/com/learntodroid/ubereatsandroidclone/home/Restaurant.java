@@ -1,5 +1,7 @@
 package com.learntodroid.ubereatsandroidclone.home;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 
 public class Restaurant {
@@ -12,8 +14,9 @@ public class Restaurant {
     private String priceCategory;
     private List<String> foodCategories;
     private String address;
+    private LatLng position;
 
-    public Restaurant(String title, double deliveryFee, int minDeliveryTime, int maxDeliveryTime, double userRating, String imageUri, String priceCategory, List<String> foodCategories, String address) {
+    public Restaurant(String title, double deliveryFee, int minDeliveryTime, int maxDeliveryTime, double userRating, String imageUri, String priceCategory, List<String> foodCategories, String address, LatLng position) {
         this.title = title;
         this.deliveryFee = deliveryFee;
         this.minDeliveryTime = minDeliveryTime;
@@ -23,6 +26,7 @@ public class Restaurant {
         this.priceCategory = priceCategory;
         this.foodCategories = foodCategories;
         this.address = address;
+        this.position = position;
     }
 
     public String getTitle() {
@@ -95,5 +99,13 @@ public class Restaurant {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public LatLng getPosition() {
+        return position;
+    }
+
+    public void setPosition(LatLng position) {
+        this.position = position;
     }
 }

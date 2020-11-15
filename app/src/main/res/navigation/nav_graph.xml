@@ -17,8 +17,15 @@
         android:label="SearchFragment" />
     <fragment
         android:id="@+id/accountFragment"
-        android:name="com.learntodroid.ubereatsandroidclone.AccountFragment"
-        android:label="AccountFragment" />
+        android:name="com.learntodroid.ubereatsandroidclone.account.AccountFragment"
+        android:label="AccountFragment" >
+        <action
+            android:id="@+id/action_accountFragment_to_addEditAddressFragment"
+            app:destination="@id/addEditAddressFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_addEditPaymentMethodFragment"
+            app:destination="@id/addEditPaymentMethodFragment" />
+    </fragment>
     <fragment
         android:id="@+id/ordersFragment"
         android:name="com.learntodroid.ubereatsandroidclone.OrdersFragment"
@@ -54,4 +61,12 @@
             android:id="@+id/action_loginSignUpFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/addEditAddressFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.addeditaddress.AddEditAddressFragment"
+        android:label="AddEditAddressFragment" />
+    <fragment
+        android:id="@+id/addEditPaymentMethodFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.addeditpaymentmethod.AddEditPaymentMethodFragment"
+        android:label="AddEditPaymentMethodFragment" />
 </navigation>

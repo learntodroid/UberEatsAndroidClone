@@ -15,15 +15,26 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.learntodroid.ubereatsandroidclone.R;
+import com.learntodroid.ubereatsandroidclone.account.Address;
+import com.learntodroid.ubereatsandroidclone.account.UberEatsAccount;
 import com.learntodroid.ubereatsandroidclone.home.Restaurant;
 import com.learntodroid.ubereatsandroidclone.menuitemdetails.ShoppingCart;
 
-public class CheckoutFragment extends Fragment {
+public class CheckoutFragment extends Fragment implements OnMapReadyCallback {
     private CheckoutViewModel checkoutViewModel;
     private CartRecyclerAdapter cartRecyclerAdapter;
     private PricesRecyclerAdapter pricesRecyclerAdapter;
     private TextView restaurantTextView, estimatedDeliveryTextView, deliveryAddressTextView;
+    private MapView deliveryMapView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +53,7 @@ public class CheckoutFragment extends Fragment {
         restaurantTextView = view.findViewById(R.id.fragment_checkout_restaurant);
         estimatedDeliveryTextView = view.findViewById(R.id.fragment_checkout_estimateddelivery);
         deliveryAddressTextView = view.findViewById(R.id.fragment_checkout_deliveryaddress);
+        deliveryMapView = view.findViewById(R.id.fragment_checkout_mapview);
 
         view.findViewById(R.id.fragment_checkout_additems).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +68,17 @@ public class CheckoutFragment extends Fragment {
                 if (r != null) {
                     restaurantTextView.setText(r.getTitle());
                     estimatedDeliveryTextView.setText(String.format("Estimated Delivery Time: %d-%d mins", r.getMinDeliveryTime(), r.getMaxDeliveryTime()));
-                    deliveryAddressTextView.setText(String.format("%s", "Your Delivery Address"));
+                }
+            }
+        });
+
+        checkoutViewModel.getAccountLiveData().observe(getViewLifecycleOwner(), new Observer<UberEatsAccount>() {
+            @Override
+            public void onChanged(UberEatsAccount uberEatsAccount) {
+                if (uberEatsAccount != null) {
+                    if (uberEatsAccount.getAddresses().size() > 0) {
+                        deliveryAddressTextView.setText(String.format("Delivering to: %s", uberEatsAccount.getAddresses().get(0).getAddress()));
+                    }
                 }
             }
         });
@@ -79,6 +101,73 @@ public class CheckoutFragment extends Fragment {
         pricesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         pricesRecyclerView.setAdapter(pricesRecyclerAdapter);
 
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(getResources().getString(R.string.google_maps_api_key));
+        }
+        deliveryMapView.onCreate(mapViewBundle);
+        deliveryMapView.getMapAsync(this);
+
         return view;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        Address deliveryAddress = checkoutViewModel.getAccountLiveData().getValue().getAddresses().get(0);
+        Restaurant restaurant = checkoutViewModel.getSelectedRestaurantMutableLiveData().getValue();
+
+        googleMap.addMarker(
+                new MarkerOptions()
+                        .position(deliveryAddress.getPosition())
+                        .title(deliveryAddress.getAddressType())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+                )
+        );
+
+        googleMap.addMarker(new MarkerOptions().position(restaurant.getPosition()).title(restaurant.getTitle()));
+
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .add(deliveryAddress.getPosition())
+                .add(restaurant.getPosition());
+
+        googleMap.addPolyline(polylineOptions);
+
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(deliveryAddress.getPosition(), 15f)));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        deliveryMapView.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        deliveryMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        deliveryMapView.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        deliveryMapView.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        deliveryMapView.onLowMemory();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        deliveryMapView.onDestroy();
     }
 }
