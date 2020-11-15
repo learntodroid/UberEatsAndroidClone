@@ -7,6 +7,10 @@ public class CartItem {
     private int quantity;
     private String notes;
 
+    public CartItem() {
+
+    }
+
     public CartItem(MenuItem menuItem, int quantity, String notes) {
         this.menuItem = menuItem;
         this.quantity = quantity;

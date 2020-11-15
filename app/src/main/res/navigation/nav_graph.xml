@@ -52,6 +52,9 @@
         <action
             android:id="@+id/action_checkOutFragment_to_restaurantFragment"
             app:destination="@id/restaurantFragment" />
+        <action
+            android:id="@+id/action_checkOutFragment_to_orderProgressFragment"
+            app:destination="@id/orderProgressFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginSignUpFragment"
@@ -69,4 +72,8 @@
         android:id="@+id/addEditPaymentMethodFragment"
         android:name="com.learntodroid.ubereatsandroidclone.addeditpaymentmethod.AddEditPaymentMethodFragment"
         android:label="AddEditPaymentMethodFragment" />
+    <fragment
+        android:id="@+id/orderProgressFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.orderprogress.OrderProgressFragment"
+        android:label="OrderProgressFragment" />
 </navigation>

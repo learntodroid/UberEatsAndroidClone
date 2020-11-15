@@ -8,6 +8,10 @@ public class UberEatsAccount {
     private List<Address> addresses;
     private List<PaymentMethod> paymentMethods;
 
+    public UberEatsAccount() {
+
+    }
+
     public UberEatsAccount(String userId) {
         this.userId = userId;
         this.addresses = new ArrayList<>();

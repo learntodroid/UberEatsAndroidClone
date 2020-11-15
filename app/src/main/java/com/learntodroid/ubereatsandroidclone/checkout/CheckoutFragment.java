@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.learntodroid.ubereatsandroidclone.R;
@@ -108,6 +110,14 @@ public class CheckoutFragment extends Fragment implements OnMapReadyCallback {
         deliveryMapView.onCreate(mapViewBundle);
         deliveryMapView.getMapAsync(this);
 
+        view.findViewById(R.id.fragment_checkout_purchase).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkoutViewModel.submitOrder();
+                Navigation.findNavController(getView()).navigate(R.id.action_checkOutFragment_to_orderProgressFragment);
+            }
+        });
+
         return view;
     }
 
@@ -116,23 +126,26 @@ public class CheckoutFragment extends Fragment implements OnMapReadyCallback {
         Address deliveryAddress = checkoutViewModel.getAccountLiveData().getValue().getAddresses().get(0);
         Restaurant restaurant = checkoutViewModel.getSelectedRestaurantMutableLiveData().getValue();
 
+        LatLng deliveryPosition = new LatLng(deliveryAddress.getLatitude(), deliveryAddress.getLongitude());
+        LatLng restaurantPosition = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
+
         googleMap.addMarker(
                 new MarkerOptions()
-                        .position(deliveryAddress.getPosition())
+                        .position(deliveryPosition)
                         .title(deliveryAddress.getAddressType())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
                 )
         );
 
-        googleMap.addMarker(new MarkerOptions().position(restaurant.getPosition()).title(restaurant.getTitle()));
+        googleMap.addMarker(new MarkerOptions().position(restaurantPosition).title(restaurant.getTitle()));
 
         PolylineOptions polylineOptions = new PolylineOptions()
-                .add(deliveryAddress.getPosition())
-                .add(restaurant.getPosition());
+                .add(deliveryPosition)
+                .add(restaurantPosition);
 
         googleMap.addPolyline(polylineOptions);
 
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(deliveryAddress.getPosition(), 15f)));
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(deliveryPosition, 15f)));
     }
 
     @Override

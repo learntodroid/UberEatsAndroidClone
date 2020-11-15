@@ -22,6 +22,10 @@ public class CheckoutViewModel extends ViewModel {
         this.accountLiveData = uberEatsRepository.getAccountLiveData();
     }
 
+    public void submitOrder() {
+        uberEatsRepository.submitOrder();
+    }
+
     public MutableLiveData<Restaurant> getSelectedRestaurantMutableLiveData() {
         return selectedRestaurantMutableLiveData;
     }

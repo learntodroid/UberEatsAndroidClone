@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.common.api.ApiException;
@@ -25,10 +26,15 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.learntodroid.ubereatsandroidclone.account.Address;
 import com.learntodroid.ubereatsandroidclone.account.PaymentMethod;
 import com.learntodroid.ubereatsandroidclone.account.UberEatsAccount;
+import com.learntodroid.ubereatsandroidclone.checkout.Order;
 import com.learntodroid.ubereatsandroidclone.home.Restaurant;
 import com.learntodroid.ubereatsandroidclone.menuitemdetails.ShoppingCart;
 import com.learntodroid.ubereatsandroidclone.restaurant.MenuItem;
@@ -36,7 +42,9 @@ import com.learntodroid.ubereatsandroidclone.search.Category;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UberEatsRepository {
     private static final UberEatsRepository instance = new UberEatsRepository();
@@ -51,11 +59,14 @@ public class UberEatsRepository {
     private FirebaseAuth firebaseAuth;
     private MutableLiveData<FirebaseUser> userLiveData;
 
-    private FirebaseFirestore db;
     private MutableLiveData<UberEatsAccount> accountLiveData;
 
     private PlacesClient placesClient;
     private MutableLiveData<List<AutocompletePrediction>> predictionMutableLiveData;
+
+    private FirebaseFirestore db;
+    private MutableLiveData<Order> orderMutableLiveData;
+    private MutableLiveData<String> orderIdMutableLiveData;
 
     private UberEatsRepository() {
         this.categoriesMutableLiveData = new MutableLiveData<>();
@@ -71,10 +82,13 @@ public class UberEatsRepository {
             userLiveData.postValue(firebaseAuth.getCurrentUser());
         }
 
-        this.db = FirebaseFirestore.getInstance();
         this.accountLiveData = new MutableLiveData<>();
 
         this.predictionMutableLiveData = new MutableLiveData<>();
+
+        this.db = FirebaseFirestore.getInstance();
+        this.orderMutableLiveData = new MutableLiveData<>();
+        this.orderIdMutableLiveData = new MutableLiveData<>();
     }
 
     public void queryCategories() {
@@ -100,11 +114,11 @@ public class UberEatsRepository {
         List<String> foodCategories = new ArrayList<>();
         foodCategories.addAll(Arrays.asList(new String[]{"American", "Burger", "Fast Food", "Family Meals"}));
 
-        restaurants.add(new Restaurant("McDonald's", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", new LatLng(-33.880490, 151.184363)));
-        restaurants.add(new Restaurant("Pizza Hut", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", new LatLng(-33.880490, 151.184363)));
-        restaurants.add(new Restaurant("Hungry Jacks", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", new LatLng(-33.880490, 151.184363)));
-        restaurants.add(new Restaurant("KFC", 5.99, 15, 35, 4.2, img, "$$", foodCategories, "123 Fake Street, Melbourne", new LatLng(-33.880490, 151.184363)));
-        restaurants.add(new Restaurant("Taco Bell", 5.99, 15, 35, 4.2, img, "$$", foodCategories, "123 Fake Street, Melbourne", new LatLng(-33.880490, 151.184363)));
+        restaurants.add(new Restaurant("McDonald's", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
+        restaurants.add(new Restaurant("Pizza Hut", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
+        restaurants.add(new Restaurant("Hungry Jacks", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
+        restaurants.add(new Restaurant("KFC", 5.99, 15, 35, 4.2, img, "$$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
+        restaurants.add(new Restaurant("Taco Bell", 5.99, 15, 35, 4.2, img, "$$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
         restaurantMutableLiveData.postValue(restaurants);
     }
 
@@ -160,8 +174,8 @@ public class UberEatsRepository {
         UberEatsAccount account = new UberEatsAccount(firebaseAuth.getUid());
 
         List<Address> addresses = new ArrayList<>();
-        addresses.add(new Address("120 Fake St, Melbourne, Victoria, 3000, Australia", new LatLng(-33.881490, 151.184363), "Home"));
-        addresses.add(new Address("500 Fake St, Melbourne, Victoria, 3000, Australia", new LatLng(-33.858754, 151.229596), "Work"));
+        addresses.add(new Address("120 Fake St, Melbourne, Victoria, 3000, Australia", -33.881490, 151.184363, "Home"));
+        addresses.add(new Address("500 Fake St, Melbourne, Victoria, 3000, Australia", -33.858754, 151.229596, "Work"));
         account.setAddresses(addresses);
 
         List<PaymentMethod> paymentMethods = new ArrayList<>();
@@ -233,7 +247,7 @@ public class UberEatsRepository {
                         UberEatsAccount account = accountLiveData.getValue();
                         List<Address> addresses = account.getAddresses();
 
-                        addresses.add(new Address(prediction.getFullText(null).toString(), place.getLatLng(), addressType));
+                        addresses.add(new Address(prediction.getFullText(null).toString(), place.getLatLng().latitude, place.getLatLng().longitude, addressType));
 
                         account.setAddresses(addresses);
                         accountLiveData.postValue(account);
@@ -245,6 +259,95 @@ public class UberEatsRepository {
                         if (exception instanceof ApiException) {
                             Log.e("Fetch Place", "Place not found: " + exception.getMessage());
                         }
+                    }
+                });
+    }
+
+    public void submitOrder() {
+        Restaurant restaurant = selectedRestaurantMutableLiveData.getValue();
+        UberEatsAccount account = accountLiveData.getValue();
+        ShoppingCart shoppingCart = shoppingCartMutableLiveData.getValue();
+
+        Order order = new Order(restaurant, account, shoppingCart, "New");
+
+        orderMutableLiveData.postValue(order);
+
+        db.collection("orders")
+                .add(order)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(UberEatsRepository.class.getSimpleName(), "DocumentSnapshot added with ID: " + documentReference.getId());
+                        orderIdMutableLiveData.postValue(documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(UberEatsRepository.class.getSimpleName(), "Error adding document", e);
+                    }
+                });
+    }
+
+    public void watchOrderUpdates() {
+        final DocumentReference docRef = db.collection("orders").document(orderIdMutableLiveData.getValue());
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.i(UberEatsRepository.class.getSimpleName(), "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    Log.i(UberEatsRepository.class.getSimpleName(), "Current data: " + snapshot.getData());
+                    Order order = snapshot.toObject(Order.class);
+                    orderMutableLiveData.postValue(order);
+                } else {
+                    Log.i(UberEatsRepository.class.getSimpleName(), "Current data: null");
+                }
+            }
+        });
+    }
+
+    public void progressOrder() {
+        Restaurant restaurant = selectedRestaurantMutableLiveData.getValue();
+        UberEatsAccount account = accountLiveData.getValue();
+        ShoppingCart shoppingCart = shoppingCartMutableLiveData.getValue();
+        Order order = orderMutableLiveData.getValue();
+        String newStatus = "Delivered";
+
+        switch (order.getStatus()) {
+            case "New":
+                newStatus = "Preparing";
+                break;
+            case "Preparing":
+                newStatus = "Awaiting Collection";
+                break;
+            case "Awaiting Collection":
+                newStatus = "Delivering";
+                break;
+            case "Delivering":
+                newStatus = "Delivered";
+                break;
+        }
+
+        order.setStatus(newStatus);
+
+        DocumentReference orderRef = db.collection("orders").document(orderIdMutableLiveData.getValue());
+        orderRef
+                .set(order)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(UberEatsRepository.class.getSimpleName(), "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(UberEatsRepository.class.getSimpleName(), "Error updating document", e);
                     }
                 });
     }
@@ -283,6 +386,14 @@ public class UberEatsRepository {
 
     public MutableLiveData<List<AutocompletePrediction>> getPredictionMutableLiveData() {
         return predictionMutableLiveData;
+    }
+
+    public MutableLiveData<Order> getOrderMutableLiveData() {
+        return orderMutableLiveData;
+    }
+
+    public MutableLiveData<String> getOrderIdMutableLiveData() {
+        return orderIdMutableLiveData;
     }
 
     public static UberEatsRepository getInstance(){

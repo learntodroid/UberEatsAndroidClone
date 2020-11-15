@@ -1,15 +1,18 @@
 package com.learntodroid.ubereatsandroidclone.account;
 
-import com.google.android.gms.maps.model.LatLng;
-
 public class Address {
     private String address;
     private String addressType;
-    private LatLng position;
+    private double latitude, longitude;
 
-    public Address(String address, LatLng position, String addressType) {
+    public Address() {
+
+    }
+
+    public Address(String address, double latitude, double longitude, String addressType) {
         this.address = address;
-        this.position = position;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.addressType = addressType;
     }
 
@@ -29,11 +32,19 @@ public class Address {
         this.addressType = addressType;
     }
 
-    public LatLng getPosition() {
-        return position;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setPosition(LatLng position) {
-        this.position = position;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

@@ -6,6 +6,10 @@ public class MenuItem {
     private String imageUri;
     private double price;
 
+    public MenuItem() {
+
+    }
+
     public MenuItem(String title, String description, String imageUri, double price) {
         this.title = title;
         this.description = description;

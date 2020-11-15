@@ -14,9 +14,12 @@ public class Restaurant {
     private String priceCategory;
     private List<String> foodCategories;
     private String address;
-    private LatLng position;
+    private double latitude, longitude;
 
-    public Restaurant(String title, double deliveryFee, int minDeliveryTime, int maxDeliveryTime, double userRating, String imageUri, String priceCategory, List<String> foodCategories, String address, LatLng position) {
+    public Restaurant() {
+    }
+
+    public Restaurant(String title, double deliveryFee, int minDeliveryTime, int maxDeliveryTime, double userRating, String imageUri, String priceCategory, List<String> foodCategories, String address, double latitude, double longitude) {
         this.title = title;
         this.deliveryFee = deliveryFee;
         this.minDeliveryTime = minDeliveryTime;
@@ -26,7 +29,8 @@ public class Restaurant {
         this.priceCategory = priceCategory;
         this.foodCategories = foodCategories;
         this.address = address;
-        this.position = position;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getTitle() {
@@ -101,11 +105,19 @@ public class Restaurant {
         this.address = address;
     }
 
-    public LatLng getPosition() {
-        return position;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setPosition(LatLng position) {
-        this.position = position;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

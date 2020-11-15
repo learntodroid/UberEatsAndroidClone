@@ -4,6 +4,9 @@ public class PriceItem {
     private String label;
     private double price;
 
+    public PriceItem() {
+    }
+
     public PriceItem(String label, double price) {
         this.label = label;
         this.price = price;

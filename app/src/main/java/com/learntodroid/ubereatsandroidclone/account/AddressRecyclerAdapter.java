@@ -56,7 +56,7 @@ public class AddressRecyclerAdapter extends RecyclerView.Adapter<AddressRecycler
         public void bind(Address address) {
             addressTextView.setText(address.getAddress());
             addressTypeTextView.setText(address.getAddressType());
-            gpsTextView.setText(String.format("LatLng: %f, %f", address.getPosition().latitude, address.getPosition().longitude));
+            gpsTextView.setText(String.format("LatLng: %f, %f", address.getLatitude(), address.getLongitude()));
         }
     }
 }
