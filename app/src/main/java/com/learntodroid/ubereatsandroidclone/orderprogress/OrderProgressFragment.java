@@ -50,7 +50,7 @@ public class OrderProgressFragment extends Fragment {
             public void onChanged(String orderId) {
                 if (orderId != null) {
                     orderIdTextView.setText(orderId);
-                    orderProgressViewModel.watchOrderUpdates();
+                    orderProgressViewModel.watchOrderUpdates(getContext().getApplicationContext());
                 }
             }
         });

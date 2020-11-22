@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/ordersFragment"
-        android:name="com.learntodroid.ubereatsandroidclone.OrdersFragment"
+        android:name="com.learntodroid.ubereatsandroidclone.orders.OrdersFragment"
         android:label="OrdersFragment" />
     <fragment
         android:id="@+id/restaurantFragment"

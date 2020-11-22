@@ -1,9 +1,11 @@
 package com.learntodroid.ubereatsandroidclone.orderprogress;
 
+import android.content.Context;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.learntodroid.ubereatsandroidclone.UberEatsRepository;
+import com.learntodroid.ubereatsandroidclone.loginsignup.UberEatsRepository;
 import com.learntodroid.ubereatsandroidclone.checkout.Order;
 
 public class OrderProgressViewModel extends ViewModel {
@@ -17,8 +19,8 @@ public class OrderProgressViewModel extends ViewModel {
         orderIdLiveData = uberEatsRepository.getOrderIdMutableLiveData();
     }
 
-    public void watchOrderUpdates() {
-        uberEatsRepository.watchOrderUpdates();
+    public void watchOrderUpdates(Context context) {
+        uberEatsRepository.watchOrderUpdates(context);
     }
 
     public void progressOrder() {

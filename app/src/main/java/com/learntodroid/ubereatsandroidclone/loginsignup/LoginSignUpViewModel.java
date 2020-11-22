@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseUser;
-import com.learntodroid.ubereatsandroidclone.UberEatsRepository;
 
 public class LoginSignUpViewModel extends ViewModel {
     private UberEatsRepository uberEatsRepository;

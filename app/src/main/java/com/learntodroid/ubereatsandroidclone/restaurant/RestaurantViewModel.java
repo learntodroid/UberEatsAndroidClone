@@ -3,7 +3,7 @@ package com.learntodroid.ubereatsandroidclone.restaurant;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.learntodroid.ubereatsandroidclone.UberEatsRepository;
+import com.learntodroid.ubereatsandroidclone.loginsignup.UberEatsRepository;
 import com.learntodroid.ubereatsandroidclone.home.Restaurant;
 import com.learntodroid.ubereatsandroidclone.menuitemdetails.ShoppingCart;
 

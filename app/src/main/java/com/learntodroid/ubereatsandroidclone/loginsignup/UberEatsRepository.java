@@ -1,14 +1,17 @@
-package com.learntodroid.ubereatsandroidclone;
+package com.learntodroid.ubereatsandroidclone.loginsignup;
 
 import android.app.Application;
+import android.app.Notification;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,6 +34,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.learntodroid.ubereatsandroidclone.R;
 import com.learntodroid.ubereatsandroidclone.account.Address;
 import com.learntodroid.ubereatsandroidclone.account.PaymentMethod;
 import com.learntodroid.ubereatsandroidclone.account.UberEatsAccount;
@@ -42,9 +48,9 @@ import com.learntodroid.ubereatsandroidclone.search.Category;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static com.learntodroid.ubereatsandroidclone.loginsignup.App.ORDERS_CHANNEL_ID;
 
 public class UberEatsRepository {
     private static final UberEatsRepository instance = new UberEatsRepository();
@@ -106,20 +112,42 @@ public class UberEatsRepository {
         categoriesMutableLiveData.postValue(categories);
     }
 
+//    public void queryRestaurants() {
+//        List<Restaurant> restaurants = new ArrayList<>();
+//
+//        String img = "https://images.pexels.com/photos/3944308/pexels-photo-3944308.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260";
+//
+//        List<String> foodCategories = new ArrayList<>();
+//        foodCategories.addAll(Arrays.asList(new String[]{"American", "Burger", "Fast Food", "Family Meals"}));
+//
+//        restaurants.add(new Restaurant("McDonald's", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
+//        restaurants.add(new Restaurant("Pizza Hut", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
+//        restaurants.add(new Restaurant("Hungry Jacks", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
+//        restaurants.add(new Restaurant("KFC", 5.99, 15, 35, 4.2, img, "$$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
+//        restaurants.add(new Restaurant("Taco Bell", 5.99, 15, 35, 4.2, img, "$$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
+//        restaurantMutableLiveData.postValue(restaurants);
+//    }
+
     public void queryRestaurants() {
-        List<Restaurant> restaurants = new ArrayList<>();
+        final List<Restaurant> restaurants = new ArrayList<>();
 
-        String img = "https://images.pexels.com/photos/3944308/pexels-photo-3944308.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260";
-
-        List<String> foodCategories = new ArrayList<>();
-        foodCategories.addAll(Arrays.asList(new String[]{"American", "Burger", "Fast Food", "Family Meals"}));
-
-        restaurants.add(new Restaurant("McDonald's", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
-        restaurants.add(new Restaurant("Pizza Hut", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
-        restaurants.add(new Restaurant("Hungry Jacks", 5.99, 15, 35, 4.2, img, "$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
-        restaurants.add(new Restaurant("KFC", 5.99, 15, 35, 4.2, img, "$$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
-        restaurants.add(new Restaurant("Taco Bell", 5.99, 15, 35, 4.2, img, "$$", foodCategories, "123 Fake Street, Melbourne", -33.880490, 151.184363));
-        restaurantMutableLiveData.postValue(restaurants);
+        db.collection("restaurants")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(UberEatsRepository.class.getSimpleName(), document.getId() + " => " + document.getData());
+                                Restaurant restaurant = document.toObject(Restaurant.class);
+                                restaurants.add(restaurant);
+                            }
+                            restaurantMutableLiveData.postValue(restaurants);
+                        } else {
+                            Log.d(UberEatsRepository.class.getSimpleName(), "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
     public void queryMenuItems() {
@@ -289,7 +317,7 @@ public class UberEatsRepository {
                 });
     }
 
-    public void watchOrderUpdates() {
+    public void watchOrderUpdates(final Context context) {
         final DocumentReference docRef = db.collection("orders").document(orderIdMutableLiveData.getValue());
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -304,6 +332,7 @@ public class UberEatsRepository {
                     Log.i(UberEatsRepository.class.getSimpleName(), "Current data: " + snapshot.getData());
                     Order order = snapshot.toObject(Order.class);
                     orderMutableLiveData.postValue(order);
+                    orderStatusNotification(context);
                 } else {
                     Log.i(UberEatsRepository.class.getSimpleName(), "Current data: null");
                 }
@@ -350,6 +379,40 @@ public class UberEatsRepository {
                         Log.w(UberEatsRepository.class.getSimpleName(), "Error updating document", e);
                     }
                 });
+    }
+
+    public void orderStatusNotification(Context context) {
+        Order order = orderMutableLiveData.getValue();
+        if (order.getNotifications().get(order.getStatus()) == false) {
+            // send notification
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+            Notification notification = new NotificationCompat.Builder(context, ORDERS_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_baseline_fastfood_24)
+                    .setContentTitle("Order " + order.getStatus())
+                    .setContentText(String.format("Order from %s Progressed to %s", selectedRestaurantMutableLiveData.getValue().getTitle(), order.getStatus()))
+                    .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                    .build();
+
+            notificationManagerCompat.notify(1, notification);
+
+            // update notification status
+            order.getNotifications().put(order.getStatus(), true);
+            DocumentReference orderRef = db.collection("orders").document(orderIdMutableLiveData.getValue());
+            orderRef
+                    .set(order)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(UberEatsRepository.class.getSimpleName(), "DocumentSnapshot successfully updated!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(UberEatsRepository.class.getSimpleName(), "Error updating document", e);
+                        }
+                    });
+        }
     }
 
     public MutableLiveData<List<Category>> getCategoriesMutableLiveData() {

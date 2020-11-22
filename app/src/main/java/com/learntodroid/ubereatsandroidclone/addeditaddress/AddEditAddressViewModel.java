@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.learntodroid.ubereatsandroidclone.UberEatsRepository;
+import com.learntodroid.ubereatsandroidclone.loginsignup.UberEatsRepository;
 
 import java.util.List;
 

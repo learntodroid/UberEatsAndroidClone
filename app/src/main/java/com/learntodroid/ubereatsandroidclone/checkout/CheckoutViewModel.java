@@ -1,9 +1,11 @@
 package com.learntodroid.ubereatsandroidclone.checkout;
 
+import android.content.Context;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.learntodroid.ubereatsandroidclone.UberEatsRepository;
+import com.learntodroid.ubereatsandroidclone.loginsignup.UberEatsRepository;
 import com.learntodroid.ubereatsandroidclone.account.UberEatsAccount;
 import com.learntodroid.ubereatsandroidclone.home.Restaurant;
 import com.learntodroid.ubereatsandroidclone.menuitemdetails.ShoppingCart;
